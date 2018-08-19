@@ -268,7 +268,7 @@ var _ = Describe("Table", func() {
 				"timestamp",
 			}
 			Expect(
-				utils.AreElementsInSlice(t.Columns(), expectedColumns),
+				utils.AreElementsInSliceStrict(t.Columns(), expectedColumns),
 			).To(BeTrue())
 		})
 	})

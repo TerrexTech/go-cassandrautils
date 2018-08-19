@@ -201,15 +201,15 @@ var _ = Describe("Table", func() {
 
 			i1 := strings.Index(outputStr, "(") + 1
 			i2 := strings.Index(outputStr, ") WITH CLUSTERING")
-			k := outputStr[i1:i2]
+			k := outputStr[i1:i2] + "," // "," allows for easier regex matching
 
 			// Input:
 			//   PRIMARY KEY (month_bucket, timestamp, uuid), textcol2 text,
-			//   uuid uuid, timestamp timestamp, month_bucket smallint, textcol1 text
+			//   uuid uuid, timestamp timestamp, month_bucket smallint, textcol1 text,
 			// Output:
 			//   textcol2 text, uuid uuid, timestamp timestamp, month_bucket smallint,
-			//   textcol1 text
-			rgx := regexp.MustCompile(`([a-zA-Z0-9_]+[ ][a-zA-Z]+([,]|\)))`)
+			//   textcol1 text,
+			rgx := regexp.MustCompile(`([a-zA-Z0-9_]+[ ][a-zA-Z]+([,]|$))`)
 			tableColumns := rgx.FindAllString(k, -1)
 			expectedColumns := []string{
 				"textcol1 text,",
@@ -218,8 +218,9 @@ var _ = Describe("Table", func() {
 				"timestamp timestamp,",
 				"month_bucket smallint,",
 			}
+
 			Expect(
-				utils.AreElementsInSlice(
+				utils.AreElementsInSliceStrict(
 					tableColumns,
 					expectedColumns,
 				),

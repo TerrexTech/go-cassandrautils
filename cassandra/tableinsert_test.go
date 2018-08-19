@@ -106,7 +106,7 @@ var _ = Describe("Table", func() {
 			i2 := strings.Index(stmt, ")")
 			insertColumns := strings.Split(stmt[i1:i2], ",")
 			Expect(
-				utils.AreElementsInSlice(insertColumns, expectedColumns),
+				utils.AreElementsInSliceStrict(insertColumns, expectedColumns),
 			).To(BeTrue())
 		})
 
@@ -128,7 +128,7 @@ var _ = Describe("Table", func() {
 				"textcol2",
 			}
 			Expect(
-				utils.AreElementsInSlice(queryx.ColumnNames, expectedColumns),
+				utils.AreElementsInSliceStrict(queryx.ColumnNames, expectedColumns),
 			).To(BeTrue())
 		})
 

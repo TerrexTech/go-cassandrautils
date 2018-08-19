@@ -73,7 +73,7 @@ var _ = Describe("Keyspace", func() {
 				"'datacenter2':2",
 			}
 			Expect(
-				utils.AreElementsInSlice(trimmedColumns, expectedColumns),
+				utils.AreElementsInSliceStrict(trimmedColumns, expectedColumns),
 			).To(BeTrue())
 
 			Expect(err).ToNot(HaveOccurred())
@@ -181,7 +181,7 @@ var _ = Describe("Keyspace", func() {
 				"'datacenter2':2",
 			}
 			Expect(
-				utils.AreElementsInSlice(trimmedColumns, expectedColumns),
+				utils.AreElementsInSliceStrict(trimmedColumns, expectedColumns),
 			).To(BeTrue())
 
 			Expect(err).ToNot(HaveOccurred())
