@@ -59,6 +59,13 @@ func main() {
 		log.Fatalln(err)
 		return
 	}
+
+	// ====================> Don't forget this!
+	defer func() {
+		session.Close()
+		log.Println("Session Closed")
+	}()
+
 	log.Println("Session Created")
 
 	// ====================> Create Keyspace
@@ -152,8 +159,4 @@ func main() {
 		// This should not be happening ;_;
 		log.Panicln("Error: Fetched-data DOES NOT match with inserted data!")
 	}
-
-	// ====================> Don't forget this!
-	session.Close()
-	log.Println("Session Closed")
 }
