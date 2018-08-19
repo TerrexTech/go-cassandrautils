@@ -317,7 +317,7 @@ func (t *Table) AsyncInsert(dataStruct interface{}) <-chan error {
 	errChan := make(chan error)
 	go func() {
 		stmt, columns := qb.Insert(t.FullName()).
-			Columns(*t.Columns()...).
+			Columns(t.Columns()...).
 			ToCql()
 
 		q := t.Session().Query(stmt)
@@ -392,7 +392,7 @@ func (t *Table) Session() driver.SessionI {
 }
 
 // Columns returns all table-columns.
-func (t *Table) Columns() *[]string {
+func (t *Table) Columns() []string {
 	if t.columns == nil {
 		var columns []string
 		for key := range *t.Schema() {
@@ -404,12 +404,12 @@ func (t *Table) Columns() *[]string {
 		}
 		t.columns = columns
 	}
-	return &t.columns
+	return t.columns
 }
 
 // ColumnsWithDataType returns a two-dimensional slice containing
 // column-name and data-type pairs.
-func (t *Table) ColumnsWithDataType() *[][]string {
+func (t *Table) ColumnsWithDataType() [][]string {
 	if t.columnsWithDataType == nil {
 		var columns [][]string
 		for key, value := range *t.Schema() {
@@ -421,7 +421,7 @@ func (t *Table) ColumnsWithDataType() *[][]string {
 		}
 		t.columnsWithDataType = columns
 	}
-	return &t.columnsWithDataType
+	return t.columnsWithDataType
 }
 
 // Column returns the column-name (as used in database) from

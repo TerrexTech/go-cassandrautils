@@ -268,7 +268,7 @@ var _ = Describe("Table", func() {
 				"timestamp",
 			}
 			Expect(
-				utils.AreElementsInSlice(*t.Columns(), expectedColumns),
+				utils.AreElementsInSlice(t.Columns(), expectedColumns),
 			).To(BeTrue())
 		})
 	})
@@ -325,7 +325,7 @@ var _ = Describe("Table", func() {
 				[]string{"textcol2", "text"},
 			}
 
-			for _, v := range *t.ColumnsWithDataType() {
+			for _, v := range t.ColumnsWithDataType() {
 				isEq := false
 				for _, ve := range expectedColumns {
 					if v[0] == ve[0] && v[1] == ve[1] {
