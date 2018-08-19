@@ -1,0 +1,62 @@
+dist: trusty
+
+services:
+  - docker
+
+language: go
+
+go:
+  - 1.10.3
+
+# Only clone the most recent commit
+git:
+  depth: 1
+
+env:
+  global:
+    - DEP_VERSION="0.5.0"
+    - DOCKER_COMPOSE_VERSION=1.22.0
+    - GOLANGCI_LINT_VERSION="1.9.3"
+
+before_install:
+  # Download dep binary to $GOPATH/bin
+  - curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
+  - chmod +x $GOPATH/bin/dep
+
+  # Download golangci-lint binary to $GOPATH/bin
+  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b $GOPATH/bin v${GOLANGCI_LINT_VERSION}
+
+  # Docker-Compose
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname
+    -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+  # Docker
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+
+install:
+  - dep ensure
+
+before_script:
+  - chmod +x ./integration_tests/run_test.sh
+
+script:
+  - golangci-lint run -v
+      -E golint
+      -E interfacer
+      -E unconvert
+      -E dupl
+      -E gocyclo
+      -E maligned
+      -E misspell
+      -E lll
+      -E unparam
+      cassandra/...
+  - go test -v -race ./...
+  - ./integration_tests/run_test.sh
+
+after_script:
+  - docker-compose -f ./integration_tests/docker-compose.yaml down
