@@ -66,6 +66,40 @@ var _ = Describe("Table", func() {
 			Expect(err).To(HaveOccurred())
 		})
 
+		It("should return error if duplicate primary-key index is found", func() {
+			definition = &map[string]TableColumn{
+				"text1": TableColumn{
+					Name:     "textcol1",
+					DataType: "text",
+				},
+				"text2": TableColumn{
+					Name:     "textcol2",
+					DataType: "text",
+				},
+				"uuid": TableColumn{
+					Name:            "uuid",
+					DataType:        "uuid",
+					PrimaryKeyIndex: "2",
+				},
+				"timestamp": TableColumn{
+					Name:            "timestamp",
+					DataType:        "timestamp",
+					PrimaryKeyIndex: "2",
+					// We also test that invalid case is handled properly
+					PrimaryKeyOrder: "DESC",
+				},
+				"monthBucket": TableColumn{
+					Name:            "month_bucket",
+					DataType:        "smallint",
+					PrimaryKeyIndex: "0",
+				},
+			}
+
+			session := &mocks.Session{}
+			_, err := NewTable(session, tableCfg, definition)
+			Expect(err).To(HaveOccurred())
+		})
+
 		It("should return error if table-definition contains invalid PrimaryKeyOrder", func() {
 			definition := &map[string]TableColumn{
 				"text1": TableColumn{
