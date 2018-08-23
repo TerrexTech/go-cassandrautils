@@ -1,9 +1,9 @@
 ### Go Cassandra-Utils
 ---
 
-This package helps in bootstrap Cassandra, aka tasks such as creating database-sessions, keyspaces, and tables.
+This package helps in bootstrapping Cassandra, including tasks such as creating database-sessions, keyspaces, and tables.
 
-**[Go Doc][0]**  
+**[Go Docs][0].**  
 Check example usage here: [examples/example.go][1]  
 More examples can be found in [test-files][2].
 
