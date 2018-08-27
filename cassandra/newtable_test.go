@@ -69,6 +69,12 @@ var _ = Describe("Table", func() {
 			Expect(err).To(HaveOccurred())
 		})
 
+		It("should return error if keyspace is not provided", func() {
+			tableCfg.Keyspace = nil
+			_, err := NewTable(nil, tableCfg, definition)
+			Expect(err).To(HaveOccurred())
+		})
+
 		It("should return error if table-name is not set", func() {
 			keyspaceConfig := KeyspaceConfig{
 				Name:                "test",
@@ -149,28 +155,6 @@ var _ = Describe("Table", func() {
 			session := &mocks.Session{}
 			_, err := NewTable(session, tableCfg, definition)
 			Expect(err).To(HaveOccurred())
-		})
-
-		It("should create table by just using name if keyspace is not specified", func() {
-			var outputStr string
-			session := &mocks.Session{
-				MockQuery: func(stmt string, values ...interface{}) {
-					outputStr = stmt
-				},
-			}
-			tc := &TableConfig{
-				Name: "test-table",
-			}
-			_, err := NewTable(session, tc, definition)
-
-			outputStr = utils.StandardizeSpaces(outputStr)
-			i := strings.IndexByte(outputStr, '(')
-			Expect(
-				strings.TrimSuffix(outputStr[:i], " "),
-			).To(
-				BeEquivalentTo("CREATE TABLE IF NOT EXISTS " + tc.Name),
-			)
-			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("should generate correct query-declaration", func() {
