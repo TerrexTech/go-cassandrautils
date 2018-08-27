@@ -169,15 +169,9 @@ func (t *Table) Name() string {
 	return t.name
 }
 
-// FullName returns the table in format keyspace.table if keyspace is set.
-// Without keyspace, the function acts same as #Name function, and just
-// returns table-name without "<keyspace>.".
+// FullName returns the table-name in keyspace.table format.
 func (t *Table) FullName() string {
-	var name string
-	if t.Keyspace() != nil {
-		name = t.Keyspace().Name() + "."
-	}
-	return name + t.Name()
+	return fmt.Sprintf("%s.%s", t.Keyspace().Name(), t.Name())
 }
 
 // Session returns the database-session used to create the table instance.

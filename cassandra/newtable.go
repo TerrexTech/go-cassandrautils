@@ -22,6 +22,9 @@ func NewTable(
 	if definition == nil || len(*definition) == 0 {
 		return nil, errors.New("Table Definition not set")
 	}
+	if tc.Keyspace == nil {
+		return nil, errors.New("Keyspace is required in TableConfig, but none was specified")
+	}
 	if tc.Name == "" {
 		return nil, errors.New("Table name is required")
 	}

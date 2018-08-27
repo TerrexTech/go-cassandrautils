@@ -48,7 +48,7 @@ var _ = Describe("Table", func() {
 	})
 
 	Context("full table-name is requested", func() {
-		It("should return <keyspace>.<name> if keyspace is set", func() {
+		It("should return <keyspace>.<name>", func() {
 			definition := &map[string]TableColumn{
 				"text1": TableColumn{
 					Name:     "textcol1",
@@ -65,23 +65,6 @@ var _ = Describe("Table", func() {
 
 			expectedName := fmt.Sprintf("%s.%s", tableCfg.Keyspace.Name(), tableCfg.Name)
 			Expect(t.FullName()).To(Equal(expectedName))
-		})
-
-		It("should return <name> if keyspace is not set", func() {
-			definition := &map[string]TableColumn{
-				"text1": TableColumn{
-					Name:     "textcol1",
-					DataType: "text",
-				},
-			}
-
-			tableCfg := &TableConfig{
-				Name: "test_table",
-			}
-			session := &mocks.Session{}
-			t, _ := NewTable(session, tableCfg, definition)
-
-			Expect(t.FullName()).To(Equal(tableCfg.Name))
 		})
 	})
 
