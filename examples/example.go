@@ -41,7 +41,7 @@ var tableDef = map[string]cs.TableColumn{
 
 func main() {
 	log.Println("Started Program")
-	keyspace := "test"
+	keyspaceName := "test"
 
 	// ====================> Set Session Configuration
 	cluster := gocql.NewCluster("127.0.0.1:9042")
@@ -70,14 +70,14 @@ func main() {
 
 	// ====================> Create Keyspace
 	keyspaceConfig := cs.KeyspaceConfig{
-		Name:                keyspace,
+		Name:                keyspaceName,
 		ReplicationStrategy: "NetworkTopologyStrategy",
 		ReplicationStrategyArgs: map[string]int{
 			"datacenter1": 1,
 		},
 	}
 
-	_, err = cs.NewKeyspace(session, keyspaceConfig)
+	keyspace, err := cs.NewKeyspace(session, keyspaceConfig)
 	if err != nil {
 		log.Fatalln(err)
 	}

@@ -2,7 +2,7 @@
 
 echo $(pwd)
 
-docker-compose -f ./integration_tests/docker-compose.yaml up -d
+docker-compose -f ./test/docker-compose.yaml up -d
 
 function ping_cassandra() {
   docker exec -it cassandra /opt/bitnami/cassandra/bin/nodetool status | grep UN

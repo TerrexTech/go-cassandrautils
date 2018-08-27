@@ -10,7 +10,7 @@ import (
 
 // TableConfig defines configuration for Table.
 type TableConfig struct {
-	Keyspace string
+	Keyspace *Keyspace
 	Name     string
 }
 
@@ -84,7 +84,7 @@ type Table struct {
 	columns             []string
 	columnsWithDataType [][]string
 	definition          *map[string]TableColumn
-	keyspace            string
+	keyspace            *Keyspace
 	name                string
 	// This facilitates mocking by allowing overwriting these
 	initIterx  func(q driver.QueryI) driver.IterxI
@@ -160,7 +160,7 @@ func (t *Table) Select(p SelectParams) (interface{}, error) {
 
 // Keyspace returns the table keyspace as specified when creating new table.
 // This can only be set when #NewTable function is called.
-func (t *Table) Keyspace() string {
+func (t *Table) Keyspace() *Keyspace {
 	return t.keyspace
 }
 
@@ -174,8 +174,8 @@ func (t *Table) Name() string {
 // returns table-name without "<keyspace>.".
 func (t *Table) FullName() string {
 	var name string
-	if t.Keyspace() != "" {
-		name = t.Keyspace() + "."
+	if t.Keyspace() != nil {
+		name = t.Keyspace().Name() + "."
 	}
 	return name + t.Name()
 }

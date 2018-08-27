@@ -11,6 +11,22 @@ import (
 )
 
 var _ = Describe("Table", func() {
+	var keyspace *Keyspace
+
+	BeforeEach(func() {
+		keyspaceConfig := KeyspaceConfig{
+			Name:                "test",
+			ReplicationStrategy: "NetworkTopologyStrategy",
+			ReplicationStrategyArgs: map[string]int{
+				"datacenter1": 1,
+			},
+		}
+		session := &mocks.Session{}
+		var err error
+		keyspace, err = NewKeyspace(session, keyspaceConfig)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	Context("table-name is requested", func() {
 		It("should return the correct table-name", func() {
 			definition := &map[string]TableColumn{
@@ -21,7 +37,7 @@ var _ = Describe("Table", func() {
 			}
 
 			tableCfg := &TableConfig{
-				Keyspace: "test",
+				Keyspace: keyspace,
 				Name:     "test_table",
 			}
 			session := &mocks.Session{}
@@ -41,13 +57,13 @@ var _ = Describe("Table", func() {
 			}
 
 			tableCfg := &TableConfig{
-				Keyspace: "test",
+				Keyspace: keyspace,
 				Name:     "test_table",
 			}
 			session := &mocks.Session{}
 			t, _ := NewTable(session, tableCfg, definition)
 
-			expectedName := fmt.Sprintf("%s.%s", tableCfg.Keyspace, tableCfg.Name)
+			expectedName := fmt.Sprintf("%s.%s", tableCfg.Keyspace.Name(), tableCfg.Name)
 			Expect(t.FullName()).To(Equal(expectedName))
 		})
 
@@ -79,7 +95,7 @@ var _ = Describe("Table", func() {
 			}
 
 			tableCfg := &TableConfig{
-				Keyspace: "test",
+				Keyspace: keyspace,
 				Name:     "test_table",
 			}
 			session := &mocks.Session{}
@@ -100,7 +116,7 @@ var _ = Describe("Table", func() {
 			}
 
 			tableCfg := &TableConfig{
-				Keyspace: "test-keyspace",
+				Keyspace: keyspace,
 				Name:     "test_table",
 			}
 			session := &mocks.Session{}
@@ -145,7 +161,7 @@ var _ = Describe("Table", func() {
 			}
 
 			tableCfg = &TableConfig{
-				Keyspace: "test",
+				Keyspace: keyspace,
 				Name:     "test_table",
 			}
 		})
@@ -194,7 +210,7 @@ var _ = Describe("Table", func() {
 			}
 
 			tableCfg = &TableConfig{
-				Keyspace: "test",
+				Keyspace: keyspace,
 				Name:     "test_table",
 			}
 		})
@@ -251,7 +267,7 @@ var _ = Describe("Table", func() {
 			}
 
 			tableCfg = &TableConfig{
-				Keyspace: "test",
+				Keyspace: keyspace,
 				Name:     "test_table",
 			}
 		})
@@ -308,7 +324,7 @@ var _ = Describe("Table", func() {
 			}
 
 			tableCfg = &TableConfig{
-				Keyspace: "test",
+				Keyspace: keyspace,
 				Name:     "test_table",
 			}
 		})
@@ -374,7 +390,7 @@ var _ = Describe("Table", func() {
 			}
 
 			tableCfg = &TableConfig{
-				Keyspace: "test",
+				Keyspace: keyspace,
 				Name:     "test_table",
 			}
 		})
