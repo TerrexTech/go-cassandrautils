@@ -26,11 +26,6 @@ func NewTable(
 		return nil, errors.New("Table name is required")
 	}
 
-	var name string
-	if tc.Keyspace != "" {
-		name = tc.Keyspace + "."
-	}
-	name += tc.Name
 	schema, err := schemaFromDefinition(definition)
 
 	t := &Table{
@@ -59,7 +54,7 @@ func NewTable(
 
 	query := fmt.Sprintf(`
     CREATE TABLE IF NOT EXISTS %s (%s) %s`,
-		name,
+		t.FullName(),
 		tableColumns,
 		clusteringOrder,
 	)

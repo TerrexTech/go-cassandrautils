@@ -47,8 +47,19 @@ var _ = Describe("Table", func() {
 				},
 			}
 
+			keyspaceConfig := KeyspaceConfig{
+				Name:                "test",
+				ReplicationStrategy: "NetworkTopologyStrategy",
+				ReplicationStrategyArgs: map[string]int{
+					"datacenter1": 1,
+				},
+			}
+			session := &mocks.Session{}
+			keyspace, err := NewKeyspace(session, keyspaceConfig)
+			Expect(err).ToNot(HaveOccurred())
+
 			tableCfg = &TableConfig{
-				Keyspace: "test",
+				Keyspace: keyspace,
 				Name:     "test_table",
 			}
 		})
@@ -59,10 +70,21 @@ var _ = Describe("Table", func() {
 		})
 
 		It("should return error if table-name is not set", func() {
-			tc := &TableConfig{
-				Keyspace: "test",
+			keyspaceConfig := KeyspaceConfig{
+				Name:                "test",
+				ReplicationStrategy: "NetworkTopologyStrategy",
+				ReplicationStrategyArgs: map[string]int{
+					"datacenter1": 1,
+				},
 			}
-			_, err := NewTable(nil, tc, nil)
+			session := &mocks.Session{}
+			keyspace, err := NewKeyspace(session, keyspaceConfig)
+			Expect(err).ToNot(HaveOccurred())
+
+			tc := &TableConfig{
+				Keyspace: keyspace,
+			}
+			_, err = NewTable(nil, tc, nil)
 			Expect(err).To(HaveOccurred())
 		})
 
@@ -160,7 +182,7 @@ var _ = Describe("Table", func() {
 			}
 			_, err := NewTable(session, tableCfg, definition)
 			Expect(err).ToNot(HaveOccurred())
-			tableName := fmt.Sprintf("%s.%s", tableCfg.Keyspace, tableCfg.Name)
+			tableName := fmt.Sprintf("%s.%s", tableCfg.Keyspace.Name(), tableCfg.Name)
 			outputStr = utils.StandardizeSpaces(outputStr)
 
 			i := strings.IndexByte(outputStr, '(')

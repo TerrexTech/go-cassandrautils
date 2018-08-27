@@ -41,7 +41,7 @@ install:
   - dep ensure
 
 before_script:
-  - chmod +x ./integration_tests/run_test.sh
+  - chmod +x ./test/run_test.sh
 
 script:
   - golangci-lint run -v
@@ -56,7 +56,7 @@ script:
       -E unparam
       cassandra/...
   - go test -v -race ./...
-  - ./integration_tests/run_test.sh
+  - ./test/run_test.sh
 
 after_script:
-  - docker-compose -f ./integration_tests/docker-compose.yaml down
+  - docker-compose -f ./test/docker-compose.yaml down

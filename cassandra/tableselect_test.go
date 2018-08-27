@@ -58,11 +58,22 @@ var _ = Describe("Table", func() {
 				},
 			}
 
-			tableCfg := &TableConfig{
-				Keyspace: "test",
-				Name:     "test_table",
+			keyspaceConfig := KeyspaceConfig{
+				Name:                "test",
+				ReplicationStrategy: "NetworkTopologyStrategy",
+				ReplicationStrategyArgs: map[string]int{
+					"datacenter1": 1,
+				},
 			}
 			session := &mocks.Session{}
+			keyspace, err := NewKeyspace(session, keyspaceConfig)
+			Expect(err).ToNot(HaveOccurred())
+
+			tableCfg := &TableConfig{
+				Keyspace: keyspace,
+				Name:     "test_table",
+			}
+
 			table, _ = NewTable(session, tableCfg, definition)
 
 			monthBucketCol, _ := table.Column("monthBucket")
