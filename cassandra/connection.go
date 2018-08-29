@@ -12,12 +12,12 @@ type ClusterDriver interface {
 
 var session *driver.Session
 
-// GetSession creates new GoCQL connection if required,
+// GetSession creates new GoCql connection if required,
 // and returns the existing or newly creating session.
 // The returned Session is a Singleton.
 func GetSession(cluster ClusterDriver) (*driver.Session, error) {
 	var err error
-	if session == nil || session.DBSession().Closed() {
+	if session == nil || session.GoCqlSession().Closed() {
 		var s *cql.Session
 		s, err = cluster.CreateSession()
 		session = driver.NewSession(s)
