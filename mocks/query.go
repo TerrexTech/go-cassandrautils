@@ -20,10 +20,10 @@ type Query struct {
 	WrappedQuery    *cql.Query
 }
 
-// DBQuery mocks the getter for wrapped GoCQL-Query.
+// GoCqlQuery mocks the getter for wrapped GoCql-Query.
 // The WrappedQuery member of Query must be explicitely set, else this will
 // return a gocql.Query with just statement set.
-func (q *Query) DBQuery() *cql.Query {
+func (q *Query) GoCqlQuery() *cql.Query {
 	if q.WrappedQuery != nil {
 		return q.WrappedQuery
 	}

@@ -4,7 +4,7 @@ import cql "github.com/gocql/gocql"
 
 // QueryI is the query-handler for database-session.
 type QueryI interface {
-	DBQuery() *cql.Query
+	GoCqlQuery() *cql.Query
 	Exec() error
 	GetPageSize() uint
 	SetPageSize(n uint) QueryI
@@ -18,8 +18,8 @@ type Query struct {
 	query    *cql.Query
 }
 
-// DBQuery returns the embedded GoCQL query.
-func (q *Query) DBQuery() *cql.Query {
+// GoCqlQuery returns the embedded GoCql query.
+func (q *Query) GoCqlQuery() *cql.Query {
 	return q.query
 }
 

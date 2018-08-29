@@ -5,7 +5,7 @@ import cql "github.com/gocql/gocql"
 // SessionI is the database connection-session.
 type SessionI interface {
 	Query(stmt string, values ...interface{}) QueryI
-	DBSession() *cql.Session
+	GoCqlSession() *cql.Session
 }
 
 // Session is the database-session implementation.
@@ -32,8 +32,8 @@ func (s *Session) Close() {
 	s.session.Close()
 }
 
-// DBSession returns the original wrapped GoCQL-Session object.
-func (s *Session) DBSession() *cql.Session {
+// GoCqlSession returns the original wrapped GoCql-Session object.
+func (s *Session) GoCqlSession() *cql.Session {
 	return s.session
 }
 

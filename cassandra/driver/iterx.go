@@ -21,7 +21,7 @@ type Iterx struct {
 // NewIterx returns a new Iterx Instance
 func NewIterx(q QueryI) IterxI {
 	return &Iterx{
-		iterx: cqlx.Iter(q.DBQuery()),
+		iterx: cqlx.Iter(q.GoCqlQuery()),
 		query: q,
 	}
 }

@@ -30,7 +30,7 @@ func NewQueryx(q QueryI, names []string) QueryxI {
 
 // BindMap binds query named parameters using Map.
 func (q *Queryx) BindMap(arg map[string]interface{}) QueryxI {
-	cqx := cqlx.Query(q.query.DBQuery(), q.ColumnNames).
+	cqx := cqlx.Query(q.query.GoCqlQuery(), q.ColumnNames).
 		BindMap(arg).
 		Query
 	q.query = &Query{
@@ -42,7 +42,7 @@ func (q *Queryx) BindMap(arg map[string]interface{}) QueryxI {
 // BindStruct binds query named parameters to values from arg using mapper.
 // If value cannot be found an error is reported.
 func (q *Queryx) BindStruct(arg interface{}) QueryxI {
-	cqx := cqlx.Query(q.query.DBQuery(), q.ColumnNames).
+	cqx := cqlx.Query(q.query.GoCqlQuery(), q.ColumnNames).
 		BindStruct(arg).
 		Query
 	q.query = &Query{

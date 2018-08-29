@@ -12,8 +12,8 @@ type Session struct {
 	MockQueryExecError string
 }
 
-// DBSession is a no-op
-func (s *Session) DBSession() *cql.Session {
+// GoCqlSession is a no-op
+func (s *Session) GoCqlSession() *cql.Session {
 	return nil
 }
 
