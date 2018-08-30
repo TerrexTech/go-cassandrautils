@@ -16,15 +16,14 @@ var session *driver.Session
 // and returns the existing or newly creating session.
 // The returned Session is a Singleton.
 func GetSession(cluster ClusterDriver) (*driver.Session, error) {
-	var err error
 	if session == nil || session.GoCqlSession().Closed() {
 		var s *cql.Session
-		s, err = cluster.CreateSession()
+		s, err := cluster.CreateSession()
+		if err != nil {
+			return nil, err
+		}
 		session = driver.NewSession(s)
 	}
 
-	if err != nil {
-		return nil, err
-	}
 	return session, nil
 }
