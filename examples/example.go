@@ -8,6 +8,15 @@ import (
 	"github.com/gocql/gocql"
 )
 
+type dataStruct struct {
+	Action     string
+	Data       string
+	Timestamp  time.Time
+	UserID     int
+	UUID       gocql.UUID
+	YearBucket uint16
+}
+
 var tableDef = map[string]cs.TableColumn{
 	"data": cs.TableColumn{
 		Name:     "data",
@@ -95,18 +104,10 @@ func main() {
 	}
 	log.Println("Created Table")
 
-	uuid, _ := gocql.RandomUUID()
+	uuid, err := gocql.RandomUUID()
 	dataTimestamp := time.Now()
-	// ====================> Insert some Data
-	type dataStruct struct {
-		Action     string
-		Data       string
-		Timestamp  time.Time
-		UserID     int
-		UUID       gocql.UUID
-		YearBucket uint16
-	}
 
+	// ====================> Insert some Data
 	d := &dataStruct{
 		Action:     "asd",
 		Data:       "sdfdf",
@@ -119,28 +120,38 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	insertMockData(t, time.Now())
+
+	dataTimestamp2 := time.Now()
+	insertMockData(t, dataTimestamp2)
+	insertMockData(t, time.Now())
+	insertMockData(t, time.Now())
+
+	dataTimestamp3 := time.Now()
+	insertMockData(t, dataTimestamp3)
+	insertMockData(t, time.Now())
+
 	log.Println("Inserted Data")
 
 	// ====================> Get the data
 	yearBucketCol, _ := t.Column("yearBucket")
 	timestampCol, _ := t.Column("timestamp")
+	uuidCol, _ := t.Column("uuid")
 
+	// =====> Select Constraints
 	colValues := []cs.ColumnComparator{
-		cs.ColumnComparator{
-			Name:  yearBucketCol,
-			Value: 2018,
-		}.Eq(),
-		cs.ColumnComparator{
-			Name:  timestampCol,
-			Value: dataTimestamp,
-		}.Eq(),
+		cs.Comparator(yearBucketCol, 2018).Eq(),
+		// Getting ranged data: Between two timestamps
+		cs.Comparator(timestampCol, dataTimestamp2).GtOrEq(),
+		cs.Comparator(timestampCol, dataTimestamp3).Lt(),
 	}
 
 	bind := []dataStruct{}
 	sp := cs.SelectParams{
 		ColumnValues:  colValues,
 		PageSize:      10,
-		SelectColumns: []string{yearBucketCol, timestampCol},
+		SelectColumns: []string{yearBucketCol, timestampCol, uuidCol},
 		ResultsBind:   &bind,
 	}
 	fetched, err := t.Select(sp)
@@ -158,5 +169,21 @@ func main() {
 	} else {
 		// This should not be happening ;_;
 		log.Panicln("Error: Fetched-data DOES NOT match with inserted data!")
+	}
+}
+
+func insertMockData(t *cs.Table, time time.Time) {
+	uuid, _ := gocql.RandomUUID()
+	d := &dataStruct{
+		Action:     "asd",
+		Data:       "sdfdf",
+		Timestamp:  time,
+		UserID:     1,
+		UUID:       uuid,
+		YearBucket: 2018,
+	}
+	err := <-t.AsyncInsert(d)
+	if err != nil {
+		log.Fatalln(err)
 	}
 }

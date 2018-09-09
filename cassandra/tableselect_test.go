@@ -95,13 +95,9 @@ var _ = Describe("Table", func() {
 		})
 
 		It("should generate correct prepared statement", func() {
-			queryx := &mocks.Queryx{}
-			table.initQueryx = func(q driver.QueryI, names []string) driver.QueryxI {
-				queryx.CqlQuery = q
-				queryx.ColumnNames = names
-				return queryx
-			}
+			var query driver.QueryI
 			table.initIterx = func(q driver.QueryI) driver.IterxI {
+				query = q
 				return &mocks.Iterx{
 					CqlQuery: q,
 				}
@@ -109,46 +105,16 @@ var _ = Describe("Table", func() {
 			_, err := table.Select(sp)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(
-				queryx.Statement(),
+				query.Statement(),
 			).To(Equal(
 				"SELECT month_bucket,timestamp FROM test.test_table WHERE month_bucket=? ",
 			))
 		})
 
-		It("should bind values correctly using BindMap", func() {
-			isBindMapCalled := false
-			mapValue := 0
-			mockBindMap := func(arg map[string]interface{}) {
-				isBindMapCalled = true
-				mapValue = arg["month_bucket"].(int)
-			}
-
-			table.initQueryx = func(q driver.QueryI, names []string) driver.QueryxI {
-				return &mocks.Queryx{
-					CqlQuery:    q,
-					ColumnNames: names,
-					MockBindMap: mockBindMap,
-				}
-			}
-			table.initIterx = func(q driver.QueryI) driver.IterxI {
-				return &mocks.Iterx{
-					CqlQuery: q,
-				}
-			}
-			_, err := table.Select(sp)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(isBindMapCalled).To(BeTrue())
-			Expect(mapValue).To(Equal(9))
-		})
-
 		It("should set the limit if specified", func() {
-			queryx := &mocks.Queryx{}
-			table.initQueryx = func(q driver.QueryI, names []string) driver.QueryxI {
-				queryx.CqlQuery = q
-				queryx.ColumnNames = names
-				return queryx
-			}
+			var query driver.QueryI
 			table.initIterx = func(q driver.QueryI) driver.IterxI {
+				query = q
 				return &mocks.Iterx{
 					CqlQuery: q,
 				}
@@ -158,7 +124,7 @@ var _ = Describe("Table", func() {
 			_, err := table.Select(sp)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(
-				queryx.Statement(),
+				query.Statement(),
 			).To(Equal(
 				"SELECT month_bucket,timestamp FROM test.test_table WHERE month_bucket=? LIMIT 6 ",
 			))
@@ -166,14 +132,8 @@ var _ = Describe("Table", func() {
 
 		It("should set the page-size if specified", func() {
 			var query driver.QueryI
-			table.initQueryx = func(q driver.QueryI, names []string) driver.QueryxI {
-				query = q
-				return &mocks.Queryx{
-					CqlQuery:    q,
-					ColumnNames: names,
-				}
-			}
 			table.initIterx = func(q driver.QueryI) driver.IterxI {
+				query = q
 				return &mocks.Iterx{
 					CqlQuery: q,
 				}
@@ -188,14 +148,8 @@ var _ = Describe("Table", func() {
 			sp.PageSize = 0
 
 			var query driver.QueryI
-			table.initQueryx = func(q driver.QueryI, names []string) driver.QueryxI {
-				query = q
-				return &mocks.Queryx{
-					CqlQuery:    q,
-					ColumnNames: names,
-				}
-			}
 			table.initIterx = func(q driver.QueryI) driver.IterxI {
+				query = q
 				return &mocks.Iterx{
 					CqlQuery: q,
 				}
