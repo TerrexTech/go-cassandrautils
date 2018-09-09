@@ -21,7 +21,7 @@ func (s *Session) GoCqlSession() *cql.Session {
 // This function internally executes #MockQuery function.
 func (s *Session) Query(stmt string, values ...interface{}) driver.QueryI {
 	if s.MockQuery != nil {
-		s.MockQuery(stmt, values)
+		s.MockQuery(stmt, values...)
 	}
 	return &Query{
 		ExecError: s.MockQueryExecError,

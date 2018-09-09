@@ -23,7 +23,7 @@ func NewSession(session *cql.Session) *Session {
 // Query prepates the specified prepared-statement with given column-name values.
 func (s *Session) Query(stmt string, values ...interface{}) QueryI {
 	return &Query{
-		query: s.session.Query(stmt, values),
+		query: s.session.Query(stmt, values...),
 	}
 }
 

@@ -29,6 +29,14 @@ type ColumnComparator struct {
 	cmpType qb.Cmp
 }
 
+// Comparator is a convenience function to create a new ColumnComparator
+func Comparator(col string, value interface{}) ColumnComparator {
+	return ColumnComparator{
+		Name:  col,
+		Value: value,
+	}
+}
+
 // Eq creates an Equality (=) operator
 func (cc ColumnComparator) Eq() ColumnComparator {
 	cc.cmpType = qb.Eq(cc.Name)
@@ -128,10 +136,10 @@ func (t *Table) AsyncInsert(dataStruct interface{}) <-chan error {
 // in SelectParams.ResultsBind
 func (t *Table) Select(p SelectParams) (interface{}, error) {
 	var cmp []qb.Cmp
-	valuesMap := make(map[string]interface{})
+	values := []interface{}{}
 	for _, v := range p.ColumnValues {
 		cmp = append(cmp, v.cmpType)
-		valuesMap[v.Name] = v.Value
+		values = append(values, v.Value)
 	}
 
 	sb := qb.Select(t.FullName()).
@@ -141,9 +149,8 @@ func (t *Table) Select(p SelectParams) (interface{}, error) {
 		sb.Limit(p.Limit)
 	}
 
-	stmt, columns := sb.ToCql()
-	q := t.Session().Query(stmt)
-	q = t.initQueryx(q, columns).BindMap(valuesMap).Query()
+	stmt, _ := sb.ToCql()
+	q := t.Session().Query(stmt, values...)
 	if p.PageSize != 0 {
 		q.SetPageSize(p.PageSize)
 	}
